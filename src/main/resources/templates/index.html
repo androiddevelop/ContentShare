@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/popper.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/clipboard.min.js"></script>
+    <script src="/static/js/layer/layer.js"></script>
+    <link rel="icon" href="/static/favicon.ico" type="image/png"/>
+    <title>内容共享</title>
+
+    <style>
+        .cb-content {
+            padding: 20px;
+        }
+
+        .cb-btn-copy {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            font-size: 12px;
+        }
+
+        .cb-btn-index {
+            position: absolute;
+            left: 10px;
+            top: 5px;
+            font-size: 12px;
+            color: #888888;
+        }
+
+        .btn-clipboard {
+            color: #888888 !important;
+            background-color: #F8F9FA;
+            border: 0;
+            outline: 0;
+        }
+
+        .btn-clipboard:hover {
+            color: #ffffff !important;
+            background-color: #027de7;
+            cursor: pointer;
+        }
+
+        .clip-image {
+            max-height: 360px;
+            max-width: 100%;
+        }
+
+        .add-btn {
+            position: fixed;
+            right: 10px;
+            bottom: 10px;
+            font-size: 20px;
+            font-weight: bolder;
+            border-radius: 25px;
+            width: 50px;
+            height: 50px;
+            padding: 0 !important;
+            z-index: 100;
+        }
+
+        @media screen and (min-width: 900px) {
+            /*当屏幕尺寸小于600px时，应用下面的CSS样式*/
+            .hide-pc {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<br/>
+<br/>
+
+<div class="container">
+
+    <div class="content">
+
+    </div>
+    <button type="button" class="btn btn-success add-btn hide-pc" data-toggle="modal" data-target="#myModal">
+        +
+    </button>
+
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title">文本操作</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- 模态框主体 -->
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <textarea class="form-control" rows="5" id="input" autofocus
+                                      placeholder="请输入要分享的文本"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="submitInputText()">提交
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    if (getQueryVariable('room') === undefined) {
+        let locationUrl = window.location.href;
+        const position = locationUrl.indexOf('?');
+        if (position !== -1) {
+            locationUrl = locationUrl.substring(0, position);
+        }
+        console.log(locationUrl);
+        window.location.href = locationUrl + '?room=share';
+    } else {
+        const clipboard = new ClipboardJS('.btn-clipboard');
+        clipboard.on('success', function (e) {
+            $(".tooltip-inner").text("复制成功!");
+            setTimeout(function () {
+                $(".tooltip").remove();
+            }, 500);
+            e.clearSelection();
+        });
+
+        clipboard.on('error', function (e) {
+            $(".tooltip-inner").text("复制失败!");
+        });
+        $(document).ready(function () {
+            fetchData();
+            $("#parse").click(function (e) {
+                layer.msg(window.clipboardData.getData('Text'));
+            });
+        });
+
+        //粘贴上传
+        document.addEventListener('paste', function (event) {
+            var items = (event.clipboardData || window.clipboardData).items;
+            var file = null;
+            var content = '';
+            if (items && items.length > 0) {
+                var parseType = items[0].type;
+                if (parseType.indexOf('image') !== -1) {
+                    file = items[0].getAsFile();
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function () {
+                        content = reader.result;
+                        upload(1, content);
+                    };
+                } else if (parseType.indexOf('text') !== -1) {
+                    items[0].getAsString(function (data) {
+                        content = data;
+                        upload(0, content);
+                    })
+                }
+            } else {
+                layer.msg("当前浏览器不支持");
+            }
+        });
+
+        setInterval(function () {
+            $.get("/api/getContentVersion?room=" + room, function (data, status) {
+                if (status !== 'success' || !data.success || data.version === version) {
+                    return;
+                }
+                fetchData();
+            });
+        }, 5000);
+    }
+
+    //type 0文本 1图片
+    function upload(type, content) {
+        var loading = layer.load(2);
+        $.post("/api/addContent?room=" + room,
+            {
+                type: type,
+                content: content
+            },
+            function (data, status) {
+                if (status !== 'success' || !data.success) {
+                    layer.msg("上传失败");
+                    layer.close(loading);
+                    return;
+                }
+                layer.close(loading);
+                fetchData();
+            });
+    }
+
+    var version = 0;
+    var room = getQueryVariable('room');
+    if (room === undefined) {
+        room = 'share';
+    }
+
+    //获取数据
+    function fetchData() {
+        var loading = layer.load(2);
+        $.post("/api/getContents?room=" + room,
+            {},
+            function (data, status) {
+                if (status !== 'success' || !data.success) {
+                    layer.msg("获取数据失败");
+                    layer.close(loading);
+                    return;
+                }
+                version = data.version;
+                $(".content").empty();
+                data.data.forEach(function (item, index) {
+                    if (item.indexOf("<a ") === 0) { //图片
+                        $(".content").append(
+                            "<div class='card bg-light text-dark'>" +
+                            "<div class='card-body cb-content'>" +
+                            item +
+                            "</div>" +
+                            "<div class='cb-btn-index'>" +
+                            "<span>" +
+                            (index + 1) +
+                            "</span>" +
+                            "</div>" +
+                            "</div>" +
+                            "<br/>"
+                        );
+                    } else { //文本
+                        $(".content").append(
+                            "<div class='card bg-light text-dark'>" +
+                            "<div class='card-body cb-content'>" +
+                            item +
+                            "</div>" +
+                            "<div class='cb-btn-copy' data-toggle='tooltip' data-placement='top' title='点我复制!'>" +
+                            "<button class='btn-clipboard btn-light' data-clipboard-text='" +
+                            item +
+                            "'>复制" +
+                            "</button>" +
+                            "</div>" +
+                            "<div class='cb-btn-index'>" +
+                            "<span>" +
+                            (index + 1) +
+                            "</span>" +
+                            "</div>" +
+                            "</div>" +
+                            "<br/>"
+                        );
+                    }
+
+                });
+                layer.close(loading);
+                // language=JQuery-CSS
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+    }
+
+    // 提交输入文本
+    function submitInputText() {
+        const content = $("#input").val();
+        if (content.length > 0) {
+            upload(0, content);
+        }
+    }
+
+    function getQueryVariable(variable) {
+        let query = window.location.search.substring(1);
+        let vars = query.split("&");
+        for (let i = 0; i < vars.length; i++) {
+            let pair = vars[i].split("=");
+            if (pair[0] === variable) {
+                return pair[1];
+            }
+        }
+        return (undefined);
+    }
+</script>
+</body>
+</html>
