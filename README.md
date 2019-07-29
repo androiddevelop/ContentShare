@@ -15,7 +15,7 @@
 
 ### 部署
 
-1. 下载[clipboard-0.0.1.jar](https://raw.githubusercontent.com/androiddevelop/ContentShare/master/history/clipboard-0.0.1.jar)
+1. 下载[clipboard-0.0.1.jar](http://cdn.codeboy.org/clipboard-0.0.1.jar)
 2. 执行以下命令即可
 ```
 java -jar clipboard-0.0.1.jar
