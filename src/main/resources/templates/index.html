@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -237,6 +236,28 @@
                             "</div>" +
                             "<br/>"
                         );
+                    } else if (checkUrl(item)) { //超链接
+                        $(".content").append(
+                            "<div class='card bg-light text-dark'>" +
+                            "<div class='card-body cb-content'>" +
+                            "<a target='_blank' href='" + item + "'>" +
+                            item +
+                            "</a>" +
+                            "</div>" +
+                            "<div class='cb-btn-copy' data-toggle='tooltip' data-placement='top' title='点我复制!'>" +
+                            "<button class='btn-clipboard btn-light' data-clipboard-text='" +
+                            item +
+                            "'>复制" +
+                            "</button>" +
+                            "</div>" +
+                            "<div class='cb-btn-index'>" +
+                            "<span>" +
+                            (index + 1) +
+                            "</span>" +
+                            "</div>" +
+                            "</div>" +
+                            "<br/>"
+                        );
                     } else { //文本
                         $(".content").append(
                             "<div class='card bg-light text-dark'>" +
@@ -284,6 +305,16 @@
             }
         }
         return (undefined);
+    }
+
+    function checkUrl(urlString) {
+        if (urlString !== "") {
+            const reg = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/;
+            if (reg.test(urlString)) {
+                return true;
+            }
+            return false;
+        }
     }
 </script>
 </body>
