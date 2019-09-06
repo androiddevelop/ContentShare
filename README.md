@@ -3,7 +3,7 @@
 
 ### Demo
 
-[share.codeboy.org](http://share.codeboy.org)
+[http://icodeboy.com](http://icodeboy.com)
 
 ### 支持
 
@@ -15,7 +15,7 @@
 
 ### 部署
 
-1. 下载[clipboard-0.0.2.jar](http://cdn.codeboy.org/clipboard-0.0.2.jar)
+1. 下载[clipboard-0.0.2.jar](http://cdn.icodeboy.com/clipboard-0.0.2.jar)
 2. 执行以下命令即可
 ```
 java -jar clipboard-0.0.2.jar
