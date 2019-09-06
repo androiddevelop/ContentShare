@@ -3,7 +3,7 @@
 
 ### Demo
 
-[http://icodeboy.com](http://icodeboy.com)
+[icodeboy.com](http://icodeboy.com)
 
 ### 支持
 
