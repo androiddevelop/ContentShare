@@ -47,9 +47,11 @@
             cursor: pointer;
         }
 
-        .clip-image {
-            max-height: 360px;
-            max-width: 100%;
+        pre {
+            font-size: 100% !important;
+            margin-bottom: 0 !important;
+            padding-left: 5px;
+            padding-right: 5px;
         }
 
         .add-btn {
@@ -261,9 +263,9 @@
                     } else { //文本
                         $(".content").append(
                             "<div class='card bg-light text-dark'>" +
-                            "<div class='card-body cb-content'>" +
+                            "<div class='card-body cb-content'><pre>" +
                             item +
-                            "</div>" +
+                            "</pre></div>" +
                             "<div class='cb-btn-copy' data-toggle='tooltip' data-placement='top' title='点我复制!'>" +
                             "<button class='btn-clipboard btn-light' data-clipboard-text='" +
                             item +
