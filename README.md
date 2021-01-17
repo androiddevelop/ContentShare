@@ -1,10 +1,6 @@
 # ContentShare
 内容共享，快速在多设备上实现文字、图片共享。
 
-### Demo
-
-[icodeboy.com](http://icodeboy.com)
-
 ### 支持
 
 - 多设备间可以访问，共享文本和图片。
@@ -15,10 +11,10 @@
 
 ### 部署
 
-1. 下载[clipboard-0.0.2.jar](http://cdn.icodeboy.com/clipboard-0.0.2.jar)
+1. 下载[clipboard-0.1.0.jar](https://github.com/androiddevelop/Files/raw/main/clipboard-0.1.0.jar)
 2. 执行以下命令即可
 ```
-java -jar clipboard-0.0.2.jar
+java -jar clipboard-0.1.0.jar
 ```
 
 > 默认80端口，如果需要修改，可以 `application.properties` 中端口号即可。
