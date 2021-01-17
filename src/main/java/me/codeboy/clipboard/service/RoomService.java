@@ -47,8 +47,7 @@ public class RoomService {
         }
         Room room = DataCenter.getDataCenter().getRoom(name);
         if (room != null) {
-            room.getContents().remove(content);
-            room.getContents().add(0, content);
+            room.addContent(content);
             return true;
         }
         return false;
