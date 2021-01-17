@@ -210,6 +210,7 @@
     }
 
     var version = 0;
+    var id_index = 0;
     var room = getQueryVariable('room');
     if (room === undefined) {
         room = 'share';
@@ -266,14 +267,15 @@
                             "<br/>"
                         );
                     } else { //文本
+                        id_index++;
                         $(".content").append(
                             "<div class='card bg-light text-dark'>" +
-                            "<div class='card-body cb-content'><pre>" +
+                            "<div class='card-body cb-content'><pre id='text-" + index + "'>" +
                             item +
                             "</pre></div>" +
                             "<div class='cb-btn-copy' data-toggle='tooltip' data-placement='top' title='点我复制!'>" +
-                            "<button class='btn-clipboard btn-light' data-clipboard-text='" +
-                            item +
+                            "<button class='btn-clipboard btn-light'  data-clipboard-action='copy' data-clipboard-target='#text-" +
+                            id_index +
                             "'>复制" +
                             "</button>" +
                             "</div>" +
