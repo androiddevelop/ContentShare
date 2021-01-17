@@ -25,3 +25,5 @@ images
 .gradle
 build
 .idea
+
+out/
