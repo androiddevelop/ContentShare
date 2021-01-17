@@ -24,7 +24,7 @@ public class RoomService {
         List<String> result = new ArrayList<>();
         Room room = DataCenter.getDataCenter().getRoom(name);
         if (room != null) {
-            result.addAll(room.contents);
+            result.addAll(room.getContents());
         }
         return result;
     }
@@ -47,8 +47,8 @@ public class RoomService {
         }
         Room room = DataCenter.getDataCenter().getRoom(name);
         if (room != null) {
-            room.contents.remove(content);
-            room.contents.add(0, content);
+            room.getContents().remove(content);
+            room.getContents().add(0, content);
             return true;
         }
         return false;
