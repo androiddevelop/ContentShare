@@ -7,6 +7,7 @@ import me.codeboy.clipboard.data.Room;
 import me.codeboy.common.base.io.util.CBFileUtil;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -24,9 +25,9 @@ public class BackupService implements ApplicationRunner {
      */
     private final static long BACKUP_TIME = 60000;
     /**
-     * 上一次提交备份请求时间
+     * 上一次备份时间
      */
-    private long lastBackupTaskCommitTime = System.currentTimeMillis();
+    private long lastBackupTaskBackupTime = System.currentTimeMillis();
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -35,6 +36,7 @@ public class BackupService implements ApplicationRunner {
             String content = CBFileUtil.getFileContent(FILE);
             Map<String, Room> rooms = JSON.parseObject(content, new TypeReference<Map<String, Room>>() {
             }.getType());
+
             DataCenter.getDataCenter().restoreData(rooms);
         }
     }
@@ -45,13 +47,26 @@ public class BackupService implements ApplicationRunner {
     public void backup() {
         try {
             long now = System.currentTimeMillis();
-            if (now - lastBackupTaskCommitTime < BACKUP_TIME) {
-                lastBackupTaskCommitTime = now;
+            if (now - lastBackupTaskBackupTime < BACKUP_TIME) {
                 return;
             }
-            lastBackupTaskCommitTime = now;
+            lastBackupTaskBackupTime = now;
             String content = JSON.toJSONString(DataCenter.getDataCenter().getAllData());
             CBFileUtil.saveContentToFile(content, FILE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Scheduled(initialDelay = 10000, fixedDelay = BACKUP_TIME)
+    public void autoBackup() {
+        try {
+            long now = System.currentTimeMillis();
+            if (now - lastBackupTaskBackupTime > BACKUP_TIME) {
+                lastBackupTaskBackupTime = now;
+                String content = JSON.toJSONString(DataCenter.getDataCenter().getAllData());
+                CBFileUtil.saveContentToFile(content, FILE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
