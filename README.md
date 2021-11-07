@@ -11,7 +11,7 @@
 
 ### 部署
 
-1. 下载[ContentShare-1.0.0.jar](https://github.com/androiddevelop/Files/raw/main/-1.0.0.jar)
+1. 下载[ContentShare-1.0.0.jar](https://github.com/androiddevelop/Files/raw/main/ContentShare-1.0.0.jar)
 2. 执行以下命令即可
 ```
 java -jar ContentShare-1.0.0.jar
