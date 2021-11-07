@@ -210,7 +210,6 @@
     }
 
     var version = 0;
-    var id_index = 0;
     var room = getQueryVariable('room');
     if (room === undefined) {
         room = 'share';
@@ -235,6 +234,12 @@
                             "<div class='card bg-light text-dark'>" +
                             "<div class='card-body cb-content'>" +
                             item +
+                            "</div>" +
+                            "<div class='cb-btn-copy' data-toggle='tooltip' data-placement='top' title='点我复制图片地址!'>" +
+                            "<button class='btn-clipboard btn-light' data-clipboard-text='" +
+                            getUrl(item) +
+                            "'>复制" +
+                            "</button>" +
                             "</div>" +
                             "<div class='cb-btn-index'>" +
                             "<span>" +
@@ -267,15 +272,14 @@
                             "<br/>"
                         );
                     } else { //文本
-                        id_index++;
                         $(".content").append(
                             "<div class='card bg-light text-dark'>" +
-                            "<div class='card-body cb-content'><pre id='text-" + index + "'>" +
+                            "<div class='card-body cb-content'><pre>" +
                             item +
                             "</pre></div>" +
                             "<div class='cb-btn-copy' data-toggle='tooltip' data-placement='top' title='点我复制!'>" +
-                            "<button class='btn-clipboard btn-light'  data-clipboard-action='copy' data-clipboard-target='#text-" +
-                            id_index +
+                            "<button class='btn-clipboard btn-light' data-clipboard-text='" +
+                            item +
                             "'>复制" +
                             "</button>" +
                             "</div>" +
@@ -316,6 +320,7 @@
         return (undefined);
     }
 
+    // 检查是否是url
     function checkUrl(urlString) {
         if (urlString !== "") {
             const reg = /^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?$/;
@@ -324,6 +329,13 @@
             }
             return false;
         }
+    }
+
+    // 获取<a>标签中的href
+    function getUrl(aString) {
+        let start = aString.indexOf("href=");
+        let end = aString.indexOf(".png", start);
+        return window.location.protocol + "//" + window.location.host + aString.substring(start + 6, end + 4);
     }
 </script>
 </body>

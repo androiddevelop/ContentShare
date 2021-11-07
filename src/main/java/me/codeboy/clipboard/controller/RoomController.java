@@ -21,29 +21,23 @@ public class RoomController {
     @Autowired
     private BackupService backupService;
 
-    /**
-     * 上一次成功的时间
-     */
-    private long lastSuccessTime = System.currentTimeMillis();
-
     @RequestMapping(value = "/api/getContents")
-    public CommonResult getContents(@RequestParam(required = false, defaultValue = "share") String name, @RequestParam(required = false) String pwd) {
-        return CommonResult.success(roomService.getContents(name), lastSuccessTime);
+    public CommonResult getContents(@RequestParam(required = false, defaultValue = "share") String room, @RequestParam(required = false) String pwd) {
+        return CommonResult.success(roomService.getContents(room), roomService.getContentUpdateTimestamp(room));
     }
 
     //0 普通文本  1图片
     @RequestMapping(value = "/api/addContent")
-    public CommonResult addContent(@RequestParam(required = false, defaultValue = "share") String name, @RequestParam String content, @RequestParam int type) {
-        boolean result = roomService.addContent(name, content, type);
+    public CommonResult addContent(@RequestParam(required = false, defaultValue = "share") String room, @RequestParam String content, @RequestParam int type) {
+        boolean result = roomService.addContent(room, content, type);
         if (result) {
-            lastSuccessTime = System.currentTimeMillis();
             backupService.backup();
         }
         return CommonResult.success(result);
     }
 
     @RequestMapping(value = "/api/getContentVersion")
-    public CommonResult getContentVersion() {
-        return CommonResult.success("success", lastSuccessTime);
+    public CommonResult getContentVersion(@RequestParam(required = false, defaultValue = "share") String room) {
+        return CommonResult.success("success", roomService.getContentUpdateTimestamp(room));
     }
 }

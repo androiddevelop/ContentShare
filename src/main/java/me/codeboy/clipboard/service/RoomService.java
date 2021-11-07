@@ -2,10 +2,10 @@ package me.codeboy.clipboard.service;
 
 import me.codeboy.clipboard.data.DataCenter;
 import me.codeboy.clipboard.data.Room;
+import me.codeboy.clipboard.util.EscapeUtil;
 import me.codeboy.clipboard.util.ImageUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,16 +17,16 @@ public class RoomService {
     /**
      * 获取房间内容
      *
-     * @param name room name
+     * @param name room id
      * @return contents
      */
     public List<String> getContents(String name) {
-        List<String> result = new ArrayList<>();
         Room room = DataCenter.getDataCenter().getRoom(name);
-        if (room != null) {
-            result.addAll(room.getContents());
+        if (room == null) {
+            room = Room.createRoom(name, null);
+            DataCenter.getDataCenter().addRoom(room);
         }
-        return result;
+        return room.getContents();
     }
 
     /**
@@ -44,12 +44,30 @@ public class RoomService {
                 return false;
             }
             content = "<a target='_blank' href='" + content + "' title='点击查看'><img class='clip-image' src='" + content + "'></src></a>";
+        } else {
+            //去除html注入
+            content = EscapeUtil.htmlEncode(content);
         }
         Room room = DataCenter.getDataCenter().getRoom(name);
         if (room != null) {
+            room.removeContent(content);
             room.addContent(content);
             return true;
         }
         return false;
+    }
+
+    /**
+     * 获取更新时间戳
+     *
+     * @param name 名字
+     * @return 时间戳
+     */
+    public long getContentUpdateTimestamp(String name) {
+        Room room = DataCenter.getDataCenter().getRoom(name);
+        if (room != null) {
+            return room.getLatestUpdateTime();
+        }
+        return -1L;
     }
 }
