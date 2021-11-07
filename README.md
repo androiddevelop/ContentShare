@@ -7,14 +7,14 @@
 - 支持房间，可以针对特定的共享有单独的区域。
 - 支持设置访问密码。(暂未支持)
 - PC端直接粘贴即可，提升效率。
-- 自动清理信息，清理24小时内没有任何访问的房间。 
+- 自动清理信息，清理24小时内没有任何访问的房间。
 
 ### 部署
 
-1. 下载[clipboard-0.1.0.jar](https://github.com/androiddevelop/Files/raw/main/clipboard-0.1.0.jar)
+1. 下载[ContentShare-1.0.0.jar](https://github.com/androiddevelop/Files/raw/main/-1.0.0.jar)
 2. 执行以下命令即可
 ```
-java -jar clipboard-0.1.0.jar
+java -jar ContentShare-1.0.0.jar
 ```
 
 > 默认80端口，如果需要修改，可以 `application.properties` 中端口号即可。
